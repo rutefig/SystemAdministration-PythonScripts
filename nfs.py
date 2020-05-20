@@ -20,8 +20,22 @@ def makeShare(path, ip, netmaskBits, isWritten):
 	exportsFile.write(share)
 	exportsFile.close()
 	subprocess.call("/etc/init.d/nfs restart", shell=True)
+	subprocess.call(["chkconfig", "nfs", "on"])
 	
 
-
-
 def deleteShare(path, ip):
+	share = "{path} {ip}".format(path=path, ip=ip)
+	exportsFile = open("/etc/exports", "rt")
+	line_list = exportsFile.readlines()
+	data = ''''''
+	for line in line_list:
+		if line.find(share) == -1:
+			data = data + line
+	exportsFile.close()
+	exportsFile = open("/etc/exports", "wt")
+	exportsFile.write(data)
+	exportsFile.close()
+
+def stopShares():
+	subprocess.call("/etc/init.d/nfs stop", shell=True)
+	subprocess.call(["chkconfig", "nfs", "off"])

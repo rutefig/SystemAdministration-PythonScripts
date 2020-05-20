@@ -1,5 +1,5 @@
 import subprocess
-import os.path
+import os
 import utilities
 
 # Instala os pacotes necessários
@@ -42,6 +42,25 @@ def createForwZone(domain, ip):
 
 	# restart DNS service
 	subprocess.call("/etc/init.d/named restart", shell=True)
+
+def deleteForwZone(domain):
+	hostsFilePath = '/var/named/{domain}.hosts'.format(domain=domain)
+	zone = '''zone "{domain}" IN {
+		type master;
+		file "{hostsFilePath}";
+	};'''.format(domain=domain, hostsFilePath=hostsFilePath)
+	# Apaga o ficheiro dos hosts
+	os.remove(hostsFilePath)
+	# Retira a zona do ficheiro de configuração de DNS
+	dnsFile = open("/etc/named.conf", "rt")
+	data = dnsFile.read()
+	data.replace(zone, "")
+	dnsFile.close()
+	dnsFile = open("/etc/named.conf", "wt")
+	dnsFile.write(data)
+	dnsFile.close()
+
+
 
 # Adiciona registo tipo A a um determinado dominio
 def addARecord(name, domain, ip):
