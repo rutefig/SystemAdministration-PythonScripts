@@ -2,10 +2,14 @@ import subprocess
 import os, sys
 import os.path
 import dns
+import utilities
 
 # Instala os pacotes necessários
 def installPack():
+	if utilities.isServiceInstalled(httpd):
+		return False
 	subprocess.call("yum install httpd -y", shell=True)
+	return True
 
 def makeVirtualHost(domain, ip, port):
 	# Verifica a existencia do ficheiro dos hosts da zona forward e se não existir cria essa zona

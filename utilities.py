@@ -19,4 +19,7 @@ def disableFirewall():
 	# ask to reboot system
 	subprocess.call("reboot")
 
-
+# Devolve true se o serviço estiver instalado no sistema e false c.c.
+def isServiceInstalled(service):
+	servicePath = "/etc/init.d/{service}".format(service=service)
+	return os.path.isfile(servicePath)

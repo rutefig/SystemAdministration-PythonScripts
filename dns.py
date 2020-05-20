@@ -1,10 +1,14 @@
 import subprocess
 import os.path
+import utilities
 
 # Instala os pacotes necessários
 def installPack():
+	if utilities.isServiceInstalled(named):
+		return False
 	subprocess.call("yum install bind* -y", shell=True)
 	subprocess.call("yum install jwhois -y", shell=True)
+	return True
 
 
 def createForwZone(domain, ip):
