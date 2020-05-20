@@ -11,12 +11,17 @@ def installPack():
 	
 
 def makeShare(path, ip, netmaskBits, isWritten):
+	installPack()
 	share = "{path} {ip}/{netmaskBits}(ro,nohide)".format(path=path, ip=ip, netmaskBits=netmaskBits)
 	if isWritten:
 		share = "{path} {ip}/{netmaskBits}(rw,nohide,sync)".format(path=path, ip=ip, netmaskBits=netmaskBits)
 	
-	exportsFile = open("/etc/exports", a+)
+	exportsFile = open("/etc/exports", "a+")
 	exportsFile.write(share)
 	exportsFile.close()
+	subprocess.call("/etc/init.d/nfs restart", shell=True)
+	
+
+
 
 def deleteShare(path, ip):

@@ -1,3 +1,5 @@
+import os.path
+
 # Cria um utilizador com o nome e password
 def createUser(name, password):
 
