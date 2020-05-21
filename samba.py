@@ -34,3 +34,4 @@ def makeShare(name, path, isWriteable=False, isPublic=True):
 	sambaFile = open("/etc/samba/smb.conf", "a+")
 	sambaFile.write(share)
 	sambaFile.close()
+	restartServices()

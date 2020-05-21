@@ -1,5 +1,10 @@
+import sys
+import nfs
 
-
+samba_menu = '''
+What do you want to do in your SAMBA Configuration?
+1. Install packages only
+'''
 
 
 nfs_menu = '''
@@ -9,6 +14,41 @@ What do you want to do in your NFS Configuration?
 3. Delete shared directory
 10. Go Back
 '''
+def nfs_option1():
+	nfs_option1 = "Do you want to only install nfs package? Say yes or no\n"
+	nfs_confirmation = raw_input(nfs_option1)
+	if nfs_confirmation == "yes":
+		nfs.installPack()
+	elif nfs_confirmation == "no":
+		break
+	else:
+		print("Please enter something rigth")
+		continue
+
+def nfs_option2():
+	print("You want to add a new shared directory, please enter the needed information")
+	path = raw_input("Directory path: ")
+	ip = raw_input("Subnet IP: ")
+	netmaskBits = raw_input("Subnet mask bits: ")
+	isNotWritten = raw_input("Is read only? yes or no: ")
+	if isNotWritten == "yes":
+		nfs.makeShare(path, ip, netmaskBits, False)
+	else:
+		nfs.makeShare(path, ip, netmaskBits, True)
+
+def nfs_option3():
+	nfs_confirmation = raw_input("Do you really want to delete a share? yes or no: ")
+	if nfs_confirmation == "yes":
+		print("Please enter the path and ip from the shared you want to delete")
+		path = raw_input("Directory path: ")
+		ip = raw_input("Subnet IP: ")
+		nfs.deleteShare(path, ip)
+	elif nfs_confirmation == "no":
+		break
+	else:
+		print("Please enter something rigth")
+		continue
+
 
 dns_menu = '''
 What do you want to do in your DNS Configuration?
@@ -23,7 +63,11 @@ What do you want to do in your DNS Configuration?
 
 http_menu = '''
 What do you want to do in your HTTP Configuration?
+1. Install packages only
+2. Create a Virtual Host
+3. Delete a Virtual Host
 '''
+http_option1 = "Do you want to only install http package? Say yes or no\n"
 
 main_menu = '''
 What type of service do you want to configure?
@@ -35,16 +79,26 @@ The associations are defined below:
 4. SAMBA Server Configuration
 10. Exit
 '''
+while(True):
+	user_choice = raw_input(main_menu)
 
-user_choice = raw_input(main_menu)
+	if user_choice == "1":
+		nfs_choice = raw_input(nfs_menu)
+		if nfs_choice == "1":
+			nfs_option1()
+		elif nfs_choice == "2":
+			nfs_option2()
+		else:
+			print("Going BACK")
+			pass
+	elif user_choice == "2":
+		user_choice = raw_input(dns_menu)
+	elif user_choice == "3":
+		user_choice = raw_input(http_menu)
+	elif user_choice == "4":
+		user_choice = raw_input(samba_menu)
+	elif user_choice == "10":
+		sys.exit()
+	else:
+		print("You must choose a valid number")
 
-if user_choice == "1":
-	print("You chose NFS Server Configuration")
-elif user_choice == "2":
-	print("You chose DNS Server Configuration")
-elif user_choice == "3":
-	print("You chose HTTP Server Configuration")
-elif user_choice == "4":
-	print("You chose SAMBA Server Configuration")
-else:
-	print("You must choose a valid number")
