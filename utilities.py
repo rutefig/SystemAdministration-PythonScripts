@@ -1,7 +1,18 @@
 import os.path
+import subprocess
+import pwd
 
-# Cria um utilizador com o nome e password
-def createUser(name, password):
+# Cria um utilizador com o nome e password se não existir e devolve true
+# Devolve false se já existir esse utilizador
+def addUser(name):
+	try:
+		pwd.getpwnam(name)
+	except KeyError:
+		subprocess.call(["useradd", name])
+		subprocess.call(["passwd", name])
+		return True
+	else:
+		return False
 
 
 # Desativa SELINUX e Iptables
