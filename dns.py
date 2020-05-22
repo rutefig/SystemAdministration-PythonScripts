@@ -83,8 +83,6 @@ def addMXRecord(name, priority, domain):
 	hostsFile.close()
 
 
-def createReverZone(ipClass):
-	
 
 
 # Editar o ficheiro do DNS para que o servidor fique à escuta de todos
