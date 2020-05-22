@@ -12,6 +12,8 @@ What do you want to do in your NFS Configuration?
 1. Install packages only
 2. Add shared directory
 3. Delete shared directory
+4. Stop sharing all directories
+5. Start/Restart NFS service
 10. Go Back
 '''
 def nfs_option1():
@@ -49,6 +51,28 @@ def nfs_option3():
 		print("Please enter something rigth")
 		continue
 
+def nfs_option4():
+	nfs_confirmation = raw_input("Do you really want to stop ALL shares? yes or no: ")
+	if nfs_confirmation == "yes":
+		print("Stoping all shares")
+		nfs.stopShares()
+		print("NFS SERVICE WAS STOPPED AND TURNED OFF!")
+	elif nfs_confirmation == "no":
+		break
+	else:
+		print("Please enter something rigth")
+		continue
+
+def nfs_option5():
+	nfs_confirmation = raw_input("Do you really want to start/restart ALL shares? yes or no: ")
+	if nfs_confirmation == "yes":
+		nfs.stopShares()
+		print("NFS SERVICE WAS RESTARTED!")
+	elif nfs_confirmation == "no":
+		break
+	else:
+		print("Please enter something rigth")
+		continue
 
 dns_menu = '''
 What do you want to do in your DNS Configuration?
@@ -60,6 +84,17 @@ What do you want to do in your DNS Configuration?
 6. Create master reverse zone 
 10. Go Back
 '''
+
+def dns_option1():
+	nfs_option1 = "Do you want to only install dns package? Say yes or no\n"
+	nfs_confirmation = raw_input(nfs_option1)
+	if nfs_confirmation == "yes":
+		nfs.installPack()
+	elif nfs_confirmation == "no":
+		break
+	else:
+		print("Please enter something rigth")
+		continue
 
 http_menu = '''
 What do you want to do in your HTTP Configuration?
@@ -88,6 +123,12 @@ while(True):
 			nfs_option1()
 		elif nfs_choice == "2":
 			nfs_option2()
+		elif nfs_choice == "3":
+			nfs_option3()
+		elif nfs_choice == "4":
+			nfs_option4()
+		elif nfs_option5 == "5":
+			nfs_option5()
 		else:
 			print("Going BACK")
 			pass

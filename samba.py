@@ -19,7 +19,6 @@ def addUserSamba(name):
 	subprocess.call(["smbpasswd", "-a", name])
 
 
-# falta confirmar que o path existe
 def makeShare(name, path, isWriteable=False, isPublic=True):
 	writeableOrReadOnly = "read only = yes"
 	if isWriteable:

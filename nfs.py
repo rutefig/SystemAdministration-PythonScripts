@@ -39,3 +39,7 @@ def deleteShare(path, ip):
 def stopShares():
 	subprocess.call("/etc/init.d/nfs stop", shell=True)
 	subprocess.call(["chkconfig", "nfs", "off"])
+
+def updateShares():
+	subprocess.call("/etc/init.d/nfs restart", shell=True)
+	subprocess.call(["chkconfig", "nfs", "on"])
