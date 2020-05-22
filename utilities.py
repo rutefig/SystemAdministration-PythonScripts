@@ -43,17 +43,26 @@ def makeBackup(path, filename):
 
 def makeCriticalBackup():
 	# cria o ficheiro de backup das configurações com o ficheiro da placa de rede
-	subprocess.call("tar -cf /storagebackups/configurationsbackups.tgz /etc/sysconfig/network-scripts/ifcfg-eth0")
+	subprocess.call("tar -cf /storagebackups/configurationsbackups.tgz /etc/sysconfig/network-scripts/ifcfg-eth0", shell=True)
 	# adiciona ao ficheiro os ficheiros de configuração do samba
-	subprocess.call("tar -rvf /storagebackups/configurationsbackups.tgz /etc/samba/smb.conf")
+	subprocess.call("tar -rvf /storagebackups/configurationsbackups.tgz /etc/samba/smb.conf", shell=True)
 	# adiciona o ficheiro de configuração do nfs ao backup das configurações
-	subprocess.call("tar -rvf /storagebackups/configurationsbackups.tgz /etc/exports")
+	subprocess.call("tar -rvf /storagebackups/configurationsbackups.tgz /etc/exports", shell=True)
 	# adiciona o ficheiro de configuração do dns ao backup das configurações
-	subprocess.call("tar -rvf /storagebackups/configurationsbackups.tgz /etc/named.conf")
+	subprocess.call("tar -rvf /storagebackups/configurationsbackups.tgz /etc/named.conf", shell=True)
 	# adiciona o ficheiro de configuração do http ao backup das configurações
-	subprocess.call("tar -rvf /storagebackups/configurationsbackups.tgz /etc/httpd/conf/httpd.conf")
+	subprocess.call("tar -rvf /storagebackups/configurationsbackups.tgz /etc/httpd/conf/httpd.conf", shell=True)
 	# cria o ficheiro de backup dos ficheiros das zonas configuradas no dns
-	subprocess.call("tar -cf /storagebackups/hostsbackups.tgz /var/named/")
+	subprocess.call("tar -cf /storagebackups/hostsbackups.tgz /var/named/", shell=True)
 	# cria o ficheiro de backup da pasta que contém os ficheiros dos vários domínios dos virtual hosts
-	subprocess.call("tar -cf /storagebackups/domainsbackups.tgz /domains/")
-def 
+	subprocess.call("tar -cf /storagebackups/domainsbackups.tgz /domains/", shell=True)
+ 
+
+def createRaid(directoryPath):
+	# cria um raid 1 + 1 hotspare, por definição com os discos sdb sdc e o sdd como hotspare
+	subprocess.call("mdadm --create --verbose /dev/md0 --level=1 --raid-devices=2 /dev/sdb /dev/sdc --spare-devices=1 /dev/sdd", shell=True)
+	# cria o sistema de ficheiros, por definição xfs e monta na diretoria mencionada
+	subprocess.call(["mkfs.xfs", "/dev/md0"])
+	if not os.path.exists(directoryPath):
+		os.mkdir(directoryPath)
+	subprocess.call(["mount", "/dev/md0", directoryPath])

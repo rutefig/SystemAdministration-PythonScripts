@@ -1,3 +1,0 @@
-yum install bind* -y
-yum install jwhois -y
-
