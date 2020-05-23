@@ -104,6 +104,11 @@ def createReverZone(ip, name):
 
 	# Defines a string with zone to append DNS configuration file
 	hostsFilePath = '/var/named/{reverseIPClass}in-addr.arpa.hosts'.format(reverseIPClass=reverseIPClass)
+	# se o ficheiro já existir significa que já existe a zona criada
+	# fazer possível atualização
+	if os.path.isfile(hostsFilePath):
+		return False
+
 	zone = '''zone "{reverseIPClass}in-addr.arpa" IN {
 		type master;
 		file "{hostsFilePath}";
@@ -131,3 +136,25 @@ def createReverZone(ip, name):
 
 	# restart DNS service
 	subprocess.call("/etc/init.d/named restart", shell=True)
+
+def deleteReverZone(ip, name):
+	ipBitsList = ip.split('.')
+	reverseIPClass = "{}.{}.{}.".format(ipBitsList[2], ipBitsList[1], ipBitsList[0])
+
+	hostsFilePath = '/var/named/{reverseIPClass}in-addr.arpa.hosts'.format(reverseIPClass=reverseIPClass)
+	zone = '''zone "{reverseIPClass}in-addr.arpa" IN {
+		type master;
+		file "{hostsFilePath}";
+	};'''.format(reverseIPClass=reverseIPClass, hostsFilePath=hostsFilePath)
+	# Apaga o ficheiro dos hosts
+	os.remove(hostsFilePath)
+	# Retira a zona do ficheiro de configuração de DNS
+	dnsFile = open("/etc/named.conf", "rt")
+	data = dnsFile.read()
+	data.replace(zone, "")
+	dnsFile.close()
+	dnsFile = open("/etc/named.conf", "wt")
+	dnsFile.write(data)
+	dnsFile.close()
+
+
