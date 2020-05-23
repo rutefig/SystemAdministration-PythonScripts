@@ -59,6 +59,8 @@ def deleteForwZone(domain):
 	dnsFile = open("/etc/named.conf", "wt")
 	dnsFile.write(data)
 	dnsFile.close()
+	# restart DNS service
+	subprocess.call("/etc/init.d/named restart", shell=True)
 
 
 
@@ -107,6 +109,7 @@ def createReverZone(ip, name):
 	# se o ficheiro já existir significa que já existe a zona criada
 	# fazer possível atualização
 	if os.path.isfile(hostsFilePath):
+		updateReverZone(ipBitsList[3], hostsFilePath, name)
 		return False
 
 	zone = '''zone "{reverseIPClass}in-addr.arpa" IN {
@@ -136,6 +139,7 @@ def createReverZone(ip, name):
 
 	# restart DNS service
 	subprocess.call("/etc/init.d/named restart", shell=True)
+	return True
 
 def deleteReverZone(ip, name):
 	ipBitsList = ip.split('.')
@@ -156,5 +160,17 @@ def deleteReverZone(ip, name):
 	dnsFile = open("/etc/named.conf", "wt")
 	dnsFile.write(data)
 	dnsFile.close()
+	# restart DNS service
+	subprocess.call("/etc/init.d/named restart", shell=True)
+
+
+def updateReverZone(lastBitsIP, hostsFilePath, name):
+	hostsFile = open(hostsFilePath, "a+")
+	data = '{lastBits}	IN	PTR	{name}.'.format(lastBits=lastBitsIP, name=name)
+	hostsFile.write(data)
+	hostsFile.close()
+	# restart DNS service
+	subprocess.call("/etc/init.d/named restart", shell=True)
+
 
 
