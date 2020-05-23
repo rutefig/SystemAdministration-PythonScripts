@@ -96,3 +96,38 @@ def setToListenAll():
 	dnsFile = open("/etc/named.conf", "wt")
 	dnsFile.write(data)
 	dnsFile.close()
+
+
+def createReverZone(ip, name):
+	ipBitsList = ip.split('.')
+	reverseIPClass = "{}.{}.{}.".format(ipBitsList[2], ipBitsList[1], ipBitsList[0])
+
+	# Defines a string with zone to append DNS configuration file
+	hostsFilePath = '/var/named/{reverseIPClass}in-addr.arpa.hosts'.format(reverseIPClass=reverseIPClass)
+	zone = '''zone "{reverseIPClass}in-addr.arpa" IN {
+		type master;
+		file "{hostsFilePath}";
+	};'''.format(reverseIPClass=reverseIPClass, hostsFilePath=hostsFilePath)
+	dnsFile = open("/etc/named.conf", "a+")
+	dnsFile.write(zone)
+	dnsFile.close()
+
+	# Creates the host file
+	hostsFile = open(hostsFilePath, "w")
+	data = '''
+	$ttl 38400
+	@	IN	SOA	server.estig.pt. mail.as.com. (
+			1165190726 ;serial
+			10800 ;refresh
+			3600 ; retry
+			604800 ; expire
+			38400 ; minimum
+			)
+		IN	NS		dns.estig.pt.
+	{lastBits}	IN	PTR	{name}.		
+	'''.format(lastBits=reverseIPClass[3], name=name)
+	hostsFile.write(data)
+	hostsFile.close()
+
+	# restart DNS service
+	subprocess.call("/etc/init.d/named restart", shell=True)
